@@ -24,51 +24,6 @@ const duration = 12;
 
 const geminiStarPath = "M0 -15 Q0 0 15 0 Q0 0 0 15 Q0 0 -15 0 Q0 0 0 -15 Z";
 
-/** Ambient floating particles for depth */
-function AmbientParticles() {
-  const dots = useMemo(
-    () =>
-      Array.from({ length: 30 }).map((_, i) => ({
-        id: i,
-        cx: Math.random() * 800,
-        cy: Math.random() * 400,
-        r: Math.random() * 1.5 + 0.5,
-        driftX: (Math.random() - 0.5) * 40,
-        driftY: (Math.random() - 0.5) * 30,
-        dur: Math.random() * 6 + 4,
-        delay: Math.random() * -10,
-        opacity: Math.random() * 0.3 + 0.1,
-      })),
-    []
-  );
-
-  return (
-    <g aria-hidden="true">
-      {dots.map((d) => (
-        <motion.circle
-          key={d.id}
-          cx={d.cx}
-          cy={d.cy}
-          r={d.r}
-          fill="url(#ambient-grad)"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: [0, d.opacity, 0],
-            x: [0, d.driftX, 0],
-            y: [0, d.driftY, 0],
-          }}
-          transition={{
-            duration: d.dur,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: d.delay,
-          }}
-        />
-      ))}
-    </g>
-  );
-}
-
 export default function App() {
   const particles = useMemo(() => {
     return Array.from({ length: 45 }).map((_, i) => {
@@ -77,8 +32,6 @@ export default function App() {
       const explodeX = 400 + Math.cos(angle) * speed;
       const explodeY = 200 + Math.sin(angle) * speed;
       const fallY = explodeY + 300 + Math.random() * 150;
-      // Cycle through Gemini palette colors
-      const colors = ["#4285f4", "#a855f7", "#f28b82", "#22d3ee", "#facc15"];
       return {
         id: i,
         explodeX,
@@ -86,31 +39,16 @@ export default function App() {
         fallY,
         startScale: Math.random() * 0.8 + 0.3,
         rotateTarget: Math.random() * 720 - 360,
-        color: colors[i % colors.length],
       };
     });
   }, []);
 
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center overflow-hidden">
-      {/* Vignette overlay */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          inset: 0,
-          pointerEvents: "none",
-          background:
-            "radial-gradient(ellipse at center, transparent 40%, rgba(6,6,15,0.7) 100%)",
-          zIndex: 1,
-        }}
-      />
-
-      <div className="w-full max-w-4xl aspect-[2/1] relative scene-container animate-fade-in"
-           style={{ zIndex: 2, minHeight: "200px" }}>
+    <div className="w-full h-screen bg-gray-50 flex flex-col items-center justify-center overflow-hidden">
+      <div className="w-full max-w-4xl aspect-[2/1] relative" style={{ minHeight: "200px" }}>
         <svg
           viewBox="0 0 800 400"
-          className="w-full h-full"
+          className="w-full h-full drop-shadow-xl"
           style={{ overflow: "visible" }}
           role="img"
           aria-label="Animated countdown: a stick figure kicks an eye, gets bonked by a staff, and the scene morphs into the number 10 with a starburst explosion — celebrating 10 days until Google I/O 2026."
@@ -126,85 +64,30 @@ export default function App() {
           </desc>
 
           <defs>
-            {/* Main Gemini gradient */}
             <linearGradient id="gemini-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#4285f4" />
-              <stop offset="33%" stopColor="#a855f7" />
-              <stop offset="66%" stopColor="#f28b82" />
-              <stop offset="100%" stopColor="#22d3ee" />
+              <stop offset="0%" stopColor="#1c7bba" />
+              <stop offset="50%" stopColor="#b551ee" />
+              <stop offset="100%" stopColor="#f28b82" />
             </linearGradient>
-
-            {/* Softer ambient gradient for background particles */}
-            <radialGradient id="ambient-grad">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity="1" />
-              <stop offset="100%" stopColor="#4285f4" stopOpacity="0" />
-            </radialGradient>
-
-            {/* Enhanced glow filter */}
-            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur" />
               <feMerge>
                 <feMergeNode in="coloredBlur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-
-            {/* Softer glow for the eye elements */}
-            <filter id="eye-glow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-
-            {/* Text gradient for the countdown label */}
-            <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
-              <stop offset="50%" stopColor="rgba(255,255,255,0.6)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.35)" />
-            </linearGradient>
-
-            {/* Stroke gradient for the stick figure and elements */}
-            <linearGradient id="stroke-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#e2e8f0" />
-              <stop offset="100%" stopColor="#94a3b8" />
-            </linearGradient>
-
-            {/* Eye fill: translucent glass */}
-            <radialGradient id="eye-fill" cx="40%" cy="35%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.15)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-            </radialGradient>
           </defs>
-
-          {/* AMBIENT FLOATING PARTICLES */}
-          <AmbientParticles />
 
           {/* BACKGROUND TEXT */}
           <text
             x="400"
-            y="345"
+            y="340"
             textAnchor="middle"
-            fontSize="24"
-            fontFamily="Inter, system-ui, sans-serif"
-            fontWeight="500"
-            letterSpacing="0.2em"
-            fill="url(#text-grad)"
+            fontSize="26"
+            className="fill-gray-400 font-medium tracking-widest"
           >
             10 DAYS UNTIL GOOGLE I/O 2026
           </text>
-
-          {/* Subtle ground line */}
-          <motion.line
-            x1="200"
-            y1="360"
-            x2="600"
-            y2="360"
-            stroke="rgba(168,85,247,0.12)"
-            strokeWidth="1"
-            strokeLinecap="round"
-          />
 
           {/* RIGHT EYE ('O') -> Becomes '0' */}
           <motion.g
@@ -215,16 +98,15 @@ export default function App() {
             }}
             transition={{ duration, times: T, repeat: Infinity, ease: "easeInOut" }}
             style={{ originX: "450px", originY: "200px" }}
-            filter="url(#eye-glow)"
           >
             <motion.ellipse
               cx="450"
               cy="200"
-              fill="url(#eye-fill)"
-              stroke="#c8d6e5"
-              initial={{ strokeWidth: 4, rx: 20, ry: 30 }}
+              fill="white"
+              stroke="#202124"
+              initial={{ strokeWidth: 6, rx: 20, ry: 30 }}
               animate={{
-                strokeWidth: [4, 4, 4, 4, 4, 4, 4, 4, 20, 20, 4, 4],
+                strokeWidth: [6, 6, 6, 6, 6, 6, 6, 6, 25, 25, 6, 6],
                 rx: [20, 20, 20, 20, 20, 20, 20, 20, 30, 30, 20, 20],
                 ry: [30, 30, 30, 30, 30, 30, 30, 30, 60, 60, 30, 30],
               }}
@@ -233,8 +115,8 @@ export default function App() {
             {/* Pupil */}
             <motion.circle
               cy="200"
-              r="7"
-              fill="#e2e8f0"
+              r="8"
+              fill="#202124"
               initial={{ cx: 440 }}
               animate={{
                 opacity: [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1],
@@ -248,7 +130,6 @@ export default function App() {
               x="440"
               y="200"
               fill="url(#gemini-grad)"
-              filter="url(#glow)"
               animate={{
                 opacity: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 scale: [0, 0.8, 0.8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -268,22 +149,21 @@ export default function App() {
             }}
             transition={{ duration, times: T, repeat: Infinity, ease: "easeInOut" }}
             style={{ originX: "350px", originY: "200px" }}
-            filter="url(#eye-glow)"
           >
             <ellipse
               cx="350"
               cy="200"
               rx="20"
               ry="30"
-              fill="url(#eye-fill)"
-              stroke="#c8d6e5"
-              strokeWidth="4"
+              fill="white"
+              stroke="#202124"
+              strokeWidth="6"
             />
             {/* Pupil */}
             <motion.circle
               cy="200"
-              r="7"
-              fill="#e2e8f0"
+              r="8"
+              fill="#202124"
               initial={{ cx: 340 }}
               animate={{
                 cx: [340, 335, 330, 330, 350, 340, 340, 340, 340, 340, 340, 340],
@@ -296,7 +176,6 @@ export default function App() {
               x="340"
               y="200"
               fill="url(#gemini-grad)"
-              filter="url(#glow)"
               animate={{
                 opacity: [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 scale: [0, 0.8, 0.8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -314,7 +193,7 @@ export default function App() {
               opacity: [0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
             }}
             transition={{ duration, times: T, repeat: Infinity, ease: "easeInOut" }}
-            stroke="url(#stroke-grad)"
+            stroke="#202124"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -323,8 +202,8 @@ export default function App() {
               cx="0"
               cy="100"
               r="15"
-              strokeWidth="6"
-              fill="rgba(255,255,255,0.08)"
+              strokeWidth="8"
+              fill="white"
             />
 
             {/* Body */}
@@ -333,14 +212,14 @@ export default function App() {
               y1="115"
               x2="0"
               y2="180"
-              strokeWidth="6"
+              strokeWidth="8"
             />
 
             {/* Left Leg */}
             <motion.line
               x1="0"
               y1="180"
-              strokeWidth="6"
+              strokeWidth="8"
               initial={{ x2: -10, y2: 220 }}
               animate={{
                 x2: [-10, -10, -20, 20, 60, -10, -10, -30, -30, -30, -10, -10],
@@ -353,7 +232,7 @@ export default function App() {
             <motion.line
               x1="0"
               y1="180"
-              strokeWidth="6"
+              strokeWidth="8"
               initial={{ x2: 10, y2: 220 }}
               animate={{
                 x2: [10, 10, 20, -20, 10, 10, 10, 30, 30, 30, 10, 10],
@@ -366,7 +245,7 @@ export default function App() {
             <motion.line
               x1="0"
               y1="140"
-              strokeWidth="6"
+              strokeWidth="8"
               initial={{ x2: -15, y2: 180 }}
               animate={{
                 x2: [-15, -15, -25, 20, -30, -15, -15, -30, -30, -30, -15, -15],
@@ -379,7 +258,7 @@ export default function App() {
             <motion.line
               x1="0"
               y1="140"
-              strokeWidth="6"
+              strokeWidth="8"
               initial={{ x2: 15, y2: 180 }}
               animate={{
                 x2: [15, 15, 25, -20, 30, 15, 15, 30, 30, 30, 15, 15],
@@ -398,17 +277,17 @@ export default function App() {
               opacity: [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
             }}
             transition={{ duration, times: T, repeat: Infinity, ease: "easeInOut" }}
-            stroke="#c8d6e5"
+            stroke="#202124"
             strokeLinecap="round"
           >
             <motion.line
-              initial={{ x1: 0, y1: -80, x2: 0, y2: 80, strokeWidth: 6 }}
+              initial={{ x1: 0, y1: -80, x2: 0, y2: 80, strokeWidth: 8 }}
               animate={{
                 x1: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 y1: [-80, -80, -80, -80, -80, -80, -80, -80, -60, -60, -80, -80],
                 x2: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 y2: [80, 80, 80, 80, 80, 80, 80, 80, 60, 60, 80, 80],
-                strokeWidth: [6, 6, 6, 6, 6, 6, 6, 6, 20, 20, 6, 6],
+                strokeWidth: [8, 8, 8, 8, 8, 8, 8, 8, 25, 25, 8, 8],
               }}
               transition={{ duration, times: T, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -418,7 +297,7 @@ export default function App() {
               y1="-45"
               x2="0"
               y2="-60"
-              strokeWidth="20"
+              strokeWidth="25"
               animate={{
                 opacity: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
               }}
@@ -431,7 +310,7 @@ export default function App() {
             <motion.path
               key={p.id}
               d={geminiStarPath}
-              fill={p.color}
+              fill="url(#gemini-grad)"
               filter="url(#glow)"
               animate={{
                 x: [400, 400, 400, 400, 400, 400, 400, 400, p.explodeX, p.explodeX, 400, 400],
