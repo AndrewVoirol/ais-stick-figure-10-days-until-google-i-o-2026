@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4285f4"/>
+      <stop offset="50%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#f28b82"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="6" fill="#0a0a1a"/>
+  <!-- Stick figure silhouette -->
+  <circle cx="16" cy="8" r="3.5" fill="none" stroke="url(#g)" stroke-width="2"/>
+  <line x1="16" y1="11.5" x2="16" y2="21" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="15" x2="10" y2="19" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="15" x2="22" y2="19" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="21" x2="11" y2="28" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="21" x2="21" y2="28" stroke="url(#g)" stroke-width="2" stroke-linecap="round"/>
+  <!-- Gemini star sparkle -->
+  <path d="M26 5 Q26 7 28 7 Q26 7 26 9 Q26 7 24 7 Q26 7 26 5 Z" fill="#facc15" opacity="0.9"/>
+</svg>
